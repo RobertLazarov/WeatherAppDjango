@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weather App (MVP)</title>
+<style>
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; margin: 2rem; }
+.container { max-width: 760px; margin: 0 auto; }
+.card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 1rem; margin-top: 1rem; }
+.row { display: flex; gap: 1rem; align-items: center; }
+.row > * { flex: 1; }
+.muted { color: #6b7280; }
+.alert { padding: .75rem 1rem; background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; border-radius: 8px; margin: .5rem 0; }
+button { appearance: none; border: 1px solid #111827; background: #111827; color: white; padding: .6rem 1rem; border-radius: 8px; cursor: pointer; }
+input[type="text"] { width: 100%; padding: .6rem .8rem; border-radius: 8px; border: 1px solid #d1d5db; }
+ul { padding-left: 1.2rem; }
+li { margin: .25rem 0; }
+</style>
+</head>
+<body>
+<main class="container">
+<h1>Weather App (MVP)</h1>
+
+
+{% if messages %}
+{% for m in messages %}
+<div class="alert" role="status">{{ m }}</div>
+{% endfor %}
+{% endif %}
+
+
+<form method="post" class="card" novalidate>
+{% csrf_token %}
+<label for="id_city">City</label>
+<div class="row">
+{{ form.city }}
+<div style="flex:0 0 auto">
+<button type="submit">Get Weather</button>
+</div>
+</div>
+</form>
+
+
+{% if weather %}
+<section class="card" aria-live="polite">
+<h2 style="margin-top:0">Current Weather — {{ weather.city }}</h2>
+<div class="row">
+<div>
+<p style="font-size:2.5rem; margin:.25rem 0;">{{ weather.temperature|floatformat:0 }}°C</p>
+<p class="muted" style="margin:.25rem 0;">{{ weather.description }}</p>
+<p class="muted" style="margin:.25rem 0;">Humidity: {{ weather.humidity }}% · Pressure: {{ weather.pressure }} hPa</p>
+</div>
+<div style="flex:0 0 auto; text-align:right;">
+<img alt="Weather icon" width="100" height="100" src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png">
+</div>
+</div>
+</section>
+{% endif %}
+
+
+<section class="card">
+<h3 style="margin-top:0">Recent searches</h3>
+{% if recent %}
+<ul>
+{% for item in recent %}
+<li>{{ item.city_name }} — {{ item.temperature|floatformat:0 }}°C · {{ item.description }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p class="muted">No recent searches yet.</p>
+{% endif %}
+</section>
+</main>
+</body>
+</html>
