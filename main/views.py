@@ -62,7 +62,7 @@ def index(request):
 	form = CityForm(request.POST or None)
 	context = {
 		'form': form,
-		'recent': SearchHistory.objects.all()[:5],
+		'recent': SearchHistory.objects.order_by('-searched_at', '-id')[:5],
 	}
 
 	if request.method == 'POST' and form.is_valid():
@@ -83,7 +83,8 @@ def index(request):
 				pressure=weather['pressure'],
 				description=weather['description'],
 			)
-			context['recent'] = SearchHistory.objects.all()[:5]
+			context['recent'] = SearchHistory.objects.order_by('-searched_at', '-id')[:5]
+
 			context['weather'] = weather
 
 	return render(request, 'main/index.html', context)
